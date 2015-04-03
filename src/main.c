@@ -28,7 +28,7 @@ void next_anim() {
   animation_set_handlers((Animation*) anim, handlers, NULL);
     
   animation_set_curve((Animation*) anim, AnimationCurveLinear);
-  animation_set_duration((Animation*) anim, 2000);
+  animation_set_duration((Animation*) anim, 1500);
   animation_set_delay((Animation*) anim, 0);
   animation_schedule((Animation*) anim);
   
@@ -52,13 +52,14 @@ void handle_init(void) {
   window_stack_push(my_window, true);
   
   //creating colorful field
-  create_color_layer(text_layer1, GRect(0,0,72,84), "00", GColorYellow, GColorRed);
+  create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorYellow, GColorRed);
   create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorCyan, GColorBlue);
   create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
   create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorMintGreen, GColorDarkGreen);
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
+  effect_layer_set_effect(effect_layer, EFFECT_MIRROR); //testing mirror effect
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation

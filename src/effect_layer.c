@@ -1,8 +1,6 @@
 #include <pebble.h>
 #include "effect_layer.h"
-  
-//list of supported effects
-#define EFFECT_INVERT 1
+#include "effects.h"  
   
 // on layer update - apply effect
 static void effect_layer_update_proc(Layer *me, GContext* ctx) {
@@ -15,32 +13,24 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   GRect window_dim = gbitmap_get_bounds(fb);
   uint8_t *fb_data = gbitmap_get_data(fb);
   
-  // original position in framebuffer bitmap
-  int x = layer_frame.origin.y * window_dim.size.w + layer_frame.origin.x; 
-  
-   // looping thru layer dimentions
-  for (int i=0; i < layer_frame.size.h * layer_frame.size.w ; i++) {
-     
-    switch (effect_layer->effect) {
-      case EFFECT_INVERT:
-         fb_data[x] = ~fb_data[x];
-         break;
-    }
- 
-    // advancing to next point OR next line
-    if (i !=0 && i % layer_frame.size.w  == 0) {
-       x += window_dim.size.w - layer_frame.size.w + 1;
-    } else {
-       x++;
-    }
-     
-  }  
+  switch (effect_layer->effect) {
+    
+    case EFFECT_INVERT:
+      effect_invert(fb_data,  layer_frame.origin.x,  layer_frame.origin.y, layer_frame.size.h, layer_frame.size.w, window_dim.size.w);
+      break;
+    
+    case EFFECT_MIRROR:
+      effect_mirror(fb_data,  layer_frame.origin.x,  layer_frame.origin.y, layer_frame.size.h, layer_frame.size.w, window_dim.size.w);
+      break;
+    
+  }
   
   graphics_release_frame_buffer(ctx, fb);
   
 }
   
 
+// create effect layer
 EffectLayer* effect_layer_create(GRect frame) {
     
   //creating base layer
@@ -56,6 +46,7 @@ EffectLayer* effect_layer_create(GRect frame) {
 
 }
 
+//destroy effect layer
 void effect_layer_destroy(EffectLayer *effect_layer) {
   
   layer_destroy(effect_layer->layer);
@@ -63,7 +54,12 @@ void effect_layer_destroy(EffectLayer *effect_layer) {
 
 }
 
+// returns base layer
 Layer* effect_layer_get_layer(EffectLayer *effect_layer){
   return effect_layer->layer;
 }
 
+//sets effect for the layer
+void effect_layer_set_effect(EffectLayer *effect_layer, int effect) {
+   effect_layer->effect = effect;
+}
