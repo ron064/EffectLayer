@@ -1,11 +1,10 @@
 #pragma once
-#pragma once
-  
 #include <pebble.h>  
 
 //list of supported effects
 #define EFFECT_INVERT 1
-#define EFFECT_MIRROR 2    
+#define EFFECT_MIRROR_VERTICAL 2    
+#define EFFECT_MIRROR_HORIZONTAL 3      
 
 // structure of effect layer
 typedef struct {

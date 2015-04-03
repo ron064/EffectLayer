@@ -4,23 +4,27 @@
   
 // on layer update - apply effect
 static void effect_layer_update_proc(Layer *me, GContext* ctx) {
+ 
   // retreiving layer and its coordinates
 	EffectLayer* effect_layer = *(EffectLayer**)(layer_get_data(me));
 	GRect layer_frame = layer_get_frame(me);  
   
-  //capturing framebuffer bitmap
+  //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
   GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);
-  GRect window_dim = gbitmap_get_bounds(fb);
-  uint8_t *fb_data = gbitmap_get_data(fb);
+  uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) gbitmap_get_data(fb);
   
   switch (effect_layer->effect) {
     
     case EFFECT_INVERT:
-      effect_invert(fb_data,  layer_frame.origin.x,  layer_frame.origin.y, layer_frame.size.h, layer_frame.size.w, window_dim.size.w);
+      effect_invert(fb_matrix, layer_frame);
       break;
     
-    case EFFECT_MIRROR:
-      effect_mirror(fb_data,  layer_frame.origin.x,  layer_frame.origin.y, layer_frame.size.h, layer_frame.size.w, window_dim.size.w);
+    case EFFECT_MIRROR_VERTICAL:
+      effect_mirror_vertical(fb_matrix, layer_frame);
+      break;
+    
+    case EFFECT_MIRROR_HORIZONTAL:
+      effect_mirror_horizontal(fb_matrix, layer_frame);
       break;
     
   }
