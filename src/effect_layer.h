@@ -5,10 +5,12 @@
 #define EFFECT_INVERT 1
 #define EFFECT_MIRROR_VERTICAL 2    
 #define EFFECT_MIRROR_HORIZONTAL 3      
+#define EFFECT_RORATE_RIGHT 4
+#define EFFECT_RORATE_LEFT 5
 
 // structure of effect layer
 typedef struct {
-	Layer       *layer;
+  Layer       *layer;
   uint8_t effect;
 } EffectLayer;
 

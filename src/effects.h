@@ -3,18 +3,25 @@
   
 #define WINDOW_WIDTH 144  
 
-// inverter effext.
-// fb_a: matix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
+// inverter effect.
+// fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
 void effect_invert(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position);
 
-// vertical mirror effext.
-// fb_a: matix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
+// vertical mirror effect.
+// fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
 void effect_mirror_vertical(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position);
 
 
-// horizontal mirror effext.
-// fb_a: matix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
+// horizontal mirror effect.
+// fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
 void effect_mirror_horizontal(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position);
+
+// Rotate 90 degrees
+// Added by Ron64
+// fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
+// position: x,y,h,w of the layer
+// right true: rotate right/clockwise false: rotate left/counter_clockwise
+void effect_rotate_90_degrees(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, bool right);
