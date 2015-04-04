@@ -6,8 +6,8 @@
 static void effect_layer_update_proc(Layer *me, GContext* ctx) {
  
   // retreiving layer and its coordinates
-	EffectLayer* effect_layer = *(EffectLayer**)(layer_get_data(me));
-	GRect layer_frame = layer_get_frame(me);  
+  EffectLayer* effect_layer = *(EffectLayer**)(layer_get_data(me));
+  GRect layer_frame = layer_get_frame(me);  
   
   //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
   GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);
@@ -26,6 +26,14 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
     case EFFECT_MIRROR_HORIZONTAL:
       effect_mirror_horizontal(fb_matrix, layer_frame);
       break;
+
+    case EFFECT_RORATE_RIGHT:
+      effect_rotate_90_degrees(fb_matrix, layer_frame, true);
+      break;
+
+    case EFFECT_RORATE_LEFT:
+      effect_rotate_90_degrees(fb_matrix, layer_frame, false);
+      break;
     
   }
   
@@ -39,9 +47,9 @@ EffectLayer* effect_layer_create(GRect frame) {
     
   //creating base layer
   EffectLayer* effect_layer = malloc(sizeof(EffectLayer));
-	effect_layer->layer = layer_create_with_data(frame, sizeof(EffectLayer*));
-	layer_set_update_proc(effect_layer->layer, effect_layer_update_proc);
-	memcpy(layer_get_data(effect_layer->layer), &effect_layer, sizeof(EffectLayer*));
+  effect_layer->layer = layer_create_with_data(frame, sizeof(EffectLayer*));
+  layer_set_update_proc(effect_layer->layer, effect_layer_update_proc);
+  memcpy(layer_get_data(effect_layer->layer), &effect_layer, sizeof(EffectLayer*));
 
   //initially assiging "invert" effect
   effect_layer->effect = EFFECT_INVERT;
