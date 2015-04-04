@@ -35,7 +35,7 @@ void next_anim() {
 }
 
 // utility function to create text layers
-void create_color_layer(TextLayer *text_layer, GRect coords, char text[], GColor8 color, GColor8 bgcolor) {
+void create_color_layer(TextLayer *text_layer, GRect coords, char text[], GColor color, GColor bgcolor) {
   
   text_layer = text_layer_create(coords);
   text_layer_set_font(text_layer,fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
@@ -52,14 +52,21 @@ void handle_init(void) {
   window_stack_push(my_window, true);
   
   //creating colorful field
-  create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorYellow, GColorRed);
-  create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorCyan, GColorBlue);
-  create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
-  create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorMintGreen, GColorDarkGreen);
+  #ifdef PBL_COLOR
+    create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorYellow, GColorRed);
+    create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorCyan, GColorBlue);
+    create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
+    create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorMintGreen, GColorDarkGreen);
+  #else
+    create_color_layer(text_layer1, GRect(0,0,72,84), "11",  GColorBlack, GColorWhite);
+    create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorWhite, GColorBlack);
+    create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
+    create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorBlack, GColorWhite);
+  #endif 
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
-  effect_layer_set_effect(effect_layer, EFFECT_MIRROR_HORIZONTAL); //testing mirror effect
+  effect_layer_set_effect(effect_layer, EFFECT_RORATE_RIGHT); //testing rotating effect
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation

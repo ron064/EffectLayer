@@ -1,7 +1,12 @@
 #pragma once
 #include <pebble.h>  
-  
-#define WINDOW_WIDTH 144  
+
+//pebble screen width in bytes (essentially bytes per row)  
+#ifdef PBL_COLOR    
+  #define WINDOW_WIDTH 144  
+#else  
+  #define WINDOW_WIDTH 20
+#endif
 
 // inverter effect.
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data

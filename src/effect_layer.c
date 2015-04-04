@@ -10,7 +10,7 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   GRect layer_frame = layer_get_frame(me);  
   
   //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
-  GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
   uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) gbitmap_get_data(fb);
   
   switch (effect_layer->effect) {
