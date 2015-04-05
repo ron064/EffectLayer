@@ -13,29 +13,21 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
   uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) gbitmap_get_data(fb);
   
-  switch (effect_layer->effect) {
-    
-    case EFFECT_INVERT:
+  if (EFFECT_INVERT & effect_layer->effect)
       effect_invert(fb_matrix, layer_frame);
-      break;
     
-    case EFFECT_MIRROR_VERTICAL:
+  if (EFFECT_MIRROR_VERTICAL & effect_layer->effect)
       effect_mirror_vertical(fb_matrix, layer_frame);
-      break;
     
-    case EFFECT_MIRROR_HORIZONTAL:
+  if (EFFECT_MIRROR_HORIZONTAL & effect_layer->effect)
       effect_mirror_horizontal(fb_matrix, layer_frame);
-      break;
 
-    case EFFECT_ROTATE_RIGHT:
+  if (EFFECT_ROTATE_RIGHT & effect_layer->effect)
       effect_rotate_90_degrees(fb_matrix, layer_frame, true);
-      break;
 
-    case EFFECT_ROTATE_LEFT:
+  if (EFFECT_ROTATE_LEFT & effect_layer->effect)
       effect_rotate_90_degrees(fb_matrix, layer_frame, false);
-      break;
     
-  }
   
   graphics_release_frame_buffer(ctx, fb);
   
