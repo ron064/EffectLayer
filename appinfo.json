@@ -12,6 +12,7 @@
     "sdkVersion": "3",
     "shortName": "Effect Layer",
     "targetPlatforms": [
+        "aplite",
         "basalt"
     ],
     "uuid": "70b3c606-e781-417f-bc89-6a32c4120f94",

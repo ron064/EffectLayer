@@ -10,7 +10,7 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   GRect layer_frame = layer_get_frame(me);  
   
   //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
-  GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
   uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) gbitmap_get_data(fb);
   
   switch (effect_layer->effect) {
@@ -27,11 +27,11 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
       effect_mirror_horizontal(fb_matrix, layer_frame);
       break;
 
-    case EFFECT_RORATE_RIGHT:
+    case EFFECT_ROTATE_RIGHT:
       effect_rotate_90_degrees(fb_matrix, layer_frame, true);
       break;
 
-    case EFFECT_RORATE_LEFT:
+    case EFFECT_ROTATE_LEFT:
       effect_rotate_90_degrees(fb_matrix, layer_frame, false);
       break;
     

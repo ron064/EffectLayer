@@ -1,5 +1,26 @@
 #include <pebble.h>
 #include "effects.h"
+  
+// set pixel color at given coordinates 
+void set_pixel(uint8_t (*fb_a)[WINDOW_WIDTH], int y, int x, uint8_t color) {
+  #ifdef PBL_COLOR 
+    fb_a[y][x] = color; // in Basalt - simple set entire byte
+  #else
+    fb_a[y][x / 8] ^= (-color ^ fb_a[y][x / 8]) & (1 << (x % 8)); // in Applite - set the bit
+  #endif
+}
+
+// get pixel color at given coordinates 
+uint8_t get_pixel(uint8_t (*fb_a)[WINDOW_WIDTH], int y, int x) {
+  
+  #ifdef PBL_COLOR
+    return fb_a[y][x]; // in Basalt - simple get entire byte
+  #else
+    return (fb_a[y][x / 8] >> (x % 8)) & 1; // in Applite - get the bit
+  #endif
+}
+  
+  
 
 // inverter effect.
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
@@ -8,8 +29,13 @@ void effect_invert(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position) {
   
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++)
-        fb_a[y + position.origin.y][x + position.origin.x] = ~fb_a[y + position.origin.y][x + position.origin.x];
-  
+        #ifdef PBL_COLOR // on Basalt simple doing NOT on entire returned byte/pixel
+          set_pixel(fb_a, y + position.origin.y, x + position.origin.x, ~get_pixel(fb_a, y + position.origin.y, x + position.origin.x));
+        #else // on applite since only 1 and 0 is returning, doing "not" by 1 - pixel
+          set_pixel(fb_a, y + position.origin.y, x + position.origin.x, 1 - get_pixel(fb_a, y + position.origin.y, x + position.origin.x));
+        #endif
+              
+          
 }
 
 // vertical mirror effect.
@@ -20,9 +46,9 @@ void effect_mirror_vertical(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position) {
 
   for (int y = 0; y < position.size.h / 2 ; y++)
      for (int x = 0; x < position.size.w; x++){
-        temp_pixel = fb_a[y + position.origin.y][x + position.origin.x];
-        fb_a[y + position.origin.y][x + position.origin.x] = fb_a[position.origin.y + position.size.h - y - 2][x + position.origin.x];
-        fb_a[position.origin.y + position.size.h - y - 2][x + position.origin.x] = temp_pixel;
+        temp_pixel = get_pixel(fb_a, y + position.origin.y, x + position.origin.x);
+        set_pixel(fb_a, y + position.origin.y, x + position.origin.x, get_pixel(fb_a, position.origin.y + position.size.h - y - 2, x + position.origin.x));
+        set_pixel(fb_a, position.origin.y + position.size.h - y - 2, x + position.origin.x, temp_pixel);
      }
 }
 
@@ -35,9 +61,9 @@ void effect_mirror_horizontal(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position) {
 
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w / 2; x++){
-        temp_pixel = fb_a[y + position.origin.y][x + position.origin.x];
-        fb_a[y + position.origin.y][x + position.origin.x] = fb_a[y + position.origin.y][position.origin.x + position.size.w - x - 2];
-        fb_a[y + position.origin.y][position.origin.x + position.size.w - x - 2] = temp_pixel;
+        temp_pixel = get_pixel(fb_a, y + position.origin.y, x + position.origin.x);
+        set_pixel(fb_a, y + position.origin.y, x + position.origin.x, get_pixel(fb_a, y + position.origin.y, position.origin.x + position.size.w - x - 2));
+        set_pixel(fb_a, y + position.origin.y, position.origin.x + position.size.w - x - 2, temp_pixel);
      }
 }
 
@@ -57,18 +83,18 @@ void effect_rotate_90_degrees(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, boo
 
   for (int c1 = 0; c1 < qtr; c1++)
     for (int c2 = 1; c2 < qtr; c2++){
-      temp_pixel = fb_a[yCn +c1][xCn +c2];
+      temp_pixel = get_pixel(fb_a, yCn +c1, xCn +c2);
       if (right){
-        fb_a[yCn +c1][xCn +c2] = fb_a[yCn -c2][xCn +c1];
-        fb_a[yCn -c2][xCn +c1] = fb_a[yCn -c1][xCn -c2];
-        fb_a[yCn -c1][xCn -c2] = fb_a[yCn +c2][xCn -c1];
-        fb_a[yCn +c2][xCn -c1] = temp_pixel;
+        set_pixel(fb_a, yCn +c1, xCn +c2, get_pixel(fb_a, yCn -c2, xCn +c1));
+        set_pixel(fb_a, yCn -c2, xCn +c1, get_pixel(fb_a, yCn -c1, xCn -c2));
+        set_pixel(fb_a, yCn -c1, xCn -c2, get_pixel(fb_a, yCn +c2, xCn -c1));
+        set_pixel(fb_a, yCn +c2, xCn -c1, temp_pixel);
       }
       else{
-        fb_a[yCn +c1][xCn +c2] = fb_a[yCn +c2][xCn -c1];
-        fb_a[yCn +c2][xCn -c1] = fb_a[yCn -c1][xCn -c2];
-        fb_a[yCn -c1][xCn -c2] = fb_a[yCn -c2][xCn +c1];
-        fb_a[yCn -c2][xCn +c1] = temp_pixel;
+        set_pixel(fb_a, yCn +c1, xCn +c2, get_pixel(fb_a, yCn +c2, xCn -c1));
+        set_pixel(fb_a, yCn +c2, xCn -c1, get_pixel(fb_a, yCn -c1, xCn -c2));
+        set_pixel(fb_a, yCn -c1, xCn -c2, get_pixel(fb_a, yCn -c2, xCn +c1));
+        set_pixel(fb_a, yCn -c2, xCn +c1, temp_pixel);
       }
      }
 }
