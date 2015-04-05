@@ -2,11 +2,11 @@
 #include <pebble.h>  
 
 //list of supported effects
-#define EFFECT_INVERT 0
-#define EFFECT_MIRROR_VERTICAL 1    
-#define EFFECT_MIRROR_HORIZONTAL 2      
-#define EFFECT_ROTATE_RIGHT 4
-#define EFFECT_ROTATE_LEFT 8
+#define EFFECT_INVERT 1
+#define EFFECT_MIRROR_VERTICAL 2
+#define EFFECT_MIRROR_HORIZONTAL 4
+#define EFFECT_ROTATE_RIGHT 8
+#define EFFECT_ROTATE_LEFT 16
 
 // structure of effect layer
 typedef struct {
