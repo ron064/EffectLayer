@@ -3,6 +3,8 @@
 
 Window *my_window;
 TextLayer *text_layer1, *text_layer2, *text_layer3, *text_layer4;
+PropertyAnimation *anim;
+
 EffectLayer* effect_layer;
 
 GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
@@ -20,7 +22,11 @@ void next_anim() {
   anim_count++;
   if (anim_count == 4)  anim_count = 0; // if we finished all animation points - start from the beginning
   
-  PropertyAnimation *anim = property_animation_create_layer_frame(effect_layer_get_layer(effect_layer), NULL, &anim_finish[anim_count]);
+  #ifndef PBL_COLOR // Applite doesn't automatically destroy animation, we need to do it
+    if (anim)  property_animation_destroy(anim);
+  #endif
+  
+  anim = property_animation_create_layer_frame(effect_layer_get_layer(effect_layer), NULL, &anim_finish[anim_count]);
   
   AnimationHandlers handlers = {
      .stopped = (AnimationStoppedHandler) on_animation_stopped
@@ -66,7 +72,7 @@ void handle_init(void) {
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
-  effect_layer_set_effect(effect_layer, EFFECT_INVERT);
+  effect_layer_set_effect(effect_layer, EFFECT_MIRROR_VERTICAL);
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
