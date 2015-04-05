@@ -27,11 +27,11 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
       effect_mirror_horizontal(fb_matrix, layer_frame);
       break;
 
-    case EFFECT_RORATE_RIGHT:
+    case EFFECT_ROTATE_RIGHT:
       effect_rotate_90_degrees(fb_matrix, layer_frame, true);
       break;
 
-    case EFFECT_RORATE_LEFT:
+    case EFFECT_ROTATE_LEFT:
       effect_rotate_90_degrees(fb_matrix, layer_frame, false);
       break;
     

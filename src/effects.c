@@ -29,7 +29,12 @@ void effect_invert(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position) {
   
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++)
-        set_pixel(fb_a, y + position.origin.y, x + position.origin.x, ~get_pixel(fb_a, y + position.origin.y, x + position.origin.x));
+        #ifdef PBL_COLOR // on Basalt simple doing NOT on entire returned byte/pixel
+          set_pixel(fb_a, y + position.origin.y, x + position.origin.x, ~get_pixel(fb_a, y + position.origin.y, x + position.origin.x));
+        #else // on applite since only 1 and 0 is returning, doing "not" by 1 - pixel
+          set_pixel(fb_a, y + position.origin.y, x + position.origin.x, 1 - get_pixel(fb_a, y + position.origin.y, x + position.origin.x));
+        #endif
+              
           
 }
 
