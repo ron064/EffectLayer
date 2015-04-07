@@ -28,7 +28,9 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   if (EFFECT_ROTATE_LEFT & effect_layer->effect)
       effect_rotate_90_degrees(fb_matrix, layer_frame, false);
     
-  
+  if (EFFECT_BLUR & effect_layer->effect)
+    effect_blur(fb_matrix, layer_frame, 1);
+
   graphics_release_frame_buffer(ctx, fb);
   
 }

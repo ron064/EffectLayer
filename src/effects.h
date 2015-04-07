@@ -30,3 +30,9 @@ void effect_mirror_horizontal(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position);
 // position: x,y,h,w of the layer
 // right true: rotate right/clockwise false: rotate left/counter_clockwise
 void effect_rotate_90_degrees(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, bool right);
+
+// blur effect.
+// fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
+// position: x,y,h,w of the layer
+// radius: blur radius
+void effect_blur(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, uint8_t radius);

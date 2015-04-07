@@ -7,6 +7,7 @@
 #define EFFECT_MIRROR_HORIZONTAL 4
 #define EFFECT_ROTATE_RIGHT 8
 #define EFFECT_ROTATE_LEFT 16
+#define EFFECT_BLUR 32
 
 // structure of effect layer
 typedef struct {
