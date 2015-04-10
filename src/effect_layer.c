@@ -11,25 +11,26 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   
   //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) gbitmap_get_data(fb);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
   
   if (EFFECT_INVERT & effect_layer->effect)
-      effect_invert(fb_matrix, layer_frame);
+      effect_invert(bitmap_data, bytes_per_row, layer_frame);
     
   if (EFFECT_MIRROR_VERTICAL & effect_layer->effect)
-      effect_mirror_vertical(fb_matrix, layer_frame);
+      effect_mirror_vertical(bitmap_data, bytes_per_row, layer_frame);
     
   if (EFFECT_MIRROR_HORIZONTAL & effect_layer->effect)
-      effect_mirror_horizontal(fb_matrix, layer_frame);
+      effect_mirror_horizontal(bitmap_data, bytes_per_row, layer_frame);
 
   if (EFFECT_ROTATE_RIGHT & effect_layer->effect)
-      effect_rotate_90_degrees(fb_matrix, layer_frame, true);
+      effect_rotate_90_degrees(bitmap_data, bytes_per_row, layer_frame, true);
 
   if (EFFECT_ROTATE_LEFT & effect_layer->effect)
-      effect_rotate_90_degrees(fb_matrix, layer_frame, false);
+      effect_rotate_90_degrees(bitmap_data, bytes_per_row, layer_frame, false);
     
   if (EFFECT_BLUR & effect_layer->effect)
-    effect_blur(fb_matrix, layer_frame, 1);
+    effect_blur(bitmap_data, bytes_per_row, layer_frame, 2);
 
   graphics_release_frame_buffer(ctx, fb);
   

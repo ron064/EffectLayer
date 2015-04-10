@@ -3,7 +3,8 @@
 #include "effects.h"
 
 #ifdef PBL_COLOR
-static void blur_(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, uint16_t line, uint8_t *dest, uint8_t radius){
+static void blur_(uint8_t *bitmap_data, int bytes_per_row, GRect position, uint16_t line, uint8_t *dest, uint8_t radius){
+  uint8_t (*fb_a)[bytes_per_row] = (uint8_t (*)[bytes_per_row])bitmap_data;
   uint16_t total[3] = {0,0,0};
   uint8_t  nb_points = 0;
   GPoint p = {0,0};
@@ -33,8 +34,9 @@ static void blur_(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, uint16_t line, 
 }
 #endif
 
-void effect_blur(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, uint8_t radius){
+void effect_blur(uint8_t *bitmap_data, int bytes_per_row, GRect position, uint8_t radius){
 #ifdef PBL_COLOR
+  uint8_t (*fb_a)[bytes_per_row] = (uint8_t (*)[bytes_per_row])bitmap_data;
   uint16_t offset_x = position.origin.x;
   uint16_t offset_y = position.origin.y;
   uint16_t width    = position.size.w;
@@ -44,13 +46,13 @@ void effect_blur(uint8_t (*fb_a)[WINDOW_WIDTH], GRect position, uint8_t radius){
  
   uint16_t h=0;
   for(; h<(radius+1); h++){
-    blur_(fb_a, position, h, buffer + h*width, radius);
+    blur_(bitmap_data, bytes_per_row, position, h, buffer + h*width, radius);
   }
  
   for(; h<height; h++){
     memcpy(&fb_a[offset_y + h - (radius + 1)][offset_x], buffer, width);
     memcpy(buffer, buffer + width, radius * width);
-    blur_(fb_a, position, h, buffer + radius*width, radius);
+    blur_(bitmap_data, bytes_per_row, position, h, buffer + radius*width, radius);
   }
 
   h=0;
