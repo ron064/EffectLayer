@@ -9,15 +9,9 @@ static void effect_layer_update_proc(Layer *me, GContext* ctx) {
   EffectLayer* effect_layer = (EffectLayer*)(layer_get_data(me));
   GRect layer_frame = layer_get_frame(me);  
   
-  //capturing framebuffer bitmap into matix[WINDOWS_HEIGHT x WINDOWS_WIDTH]
-  GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  uint8_t *bitmap_data =  gbitmap_get_data(fb);
-  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
-  
   // Applying effects
-  for(uint8_t i=0; effect_layer->effects[i] && i<MAX_EFFECTS;++i) effect_layer->effects[i](bitmap_data, bytes_per_row, layer_frame, effect_layer->params[i]);
+  for(uint8_t i=0; effect_layer->effects[i] && i<MAX_EFFECTS;++i) effect_layer->effects[i](ctx, layer_frame, effect_layer->params[i]);
 
-  graphics_release_frame_buffer(ctx, fb);
 }
   
 
