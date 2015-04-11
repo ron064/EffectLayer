@@ -33,7 +33,7 @@ uint8_t get_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x) {
 // inverter effect.
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer  
-void effect_invert(uint8_t *bitmap_data, int bytes_per_row, GRect position) {
+void effect_invert(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
   
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++)
@@ -49,7 +49,7 @@ void effect_invert(uint8_t *bitmap_data, int bytes_per_row, GRect position) {
 // vertical mirror effect.
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
-void effect_mirror_vertical(uint8_t *bitmap_data, int bytes_per_row, GRect position) {
+void effect_mirror_vertical(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
   uint8_t temp_pixel;  
 
   for (int y = 0; y < position.size.h / 2 ; y++)
@@ -64,7 +64,7 @@ void effect_mirror_vertical(uint8_t *bitmap_data, int bytes_per_row, GRect posit
 // horizontal mirror effect.
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
-void effect_mirror_horizontal(uint8_t *bitmap_data, int bytes_per_row, GRect position) {
+void effect_mirror_horizontal(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
   uint8_t temp_pixel;  
 
   for (int y = 0; y < position.size.h; y++)
@@ -80,7 +80,8 @@ void effect_mirror_horizontal(uint8_t *bitmap_data, int bytes_per_row, GRect pos
 // fb_a: matrix[WINDOWS_HEIGHT x WINDOWS_WIDTH] width screen bitmap data
 // position: x,y,h,w of the layer
 // right true: rotate right/clockwise false: rotate left/counter_clockwise
-void effect_rotate_90_degrees(uint8_t *bitmap_data, int bytes_per_row, GRect position, bool right){
+void effect_rotate_90_degrees(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param){
+  bool right = (bool)(uint32_t)param;
   uint8_t qtr, xCn, yCn, temp_pixel;
   xCn= position.origin.x + position.size.w /2;
   yCn= position.origin.y + position.size.h /2;
