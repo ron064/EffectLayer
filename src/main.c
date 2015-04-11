@@ -72,12 +72,15 @@ void handle_init(void) {
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
-  effect_layer_set_effect(effect_layer, EFFECT_MIRROR_VERTICAL | EFFECT_MIRROR_HORIZONTAL );
+  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
+  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void*)true);
+//  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
+//  effect_layer_add_effect(effect_layer, effect_mirror_horizontal, NULL);
+  effect_layer_add_effect(effect_layer, effect_blur, (void*)1);
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
   next_anim();
-
 }
 
 void handle_deinit(void) {
