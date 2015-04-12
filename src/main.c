@@ -7,6 +7,9 @@ PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
 EffectMask *mask;
+EffectLayer* fps_layer;
+
+EffectFPS fps_params = {.starttt = 0};
 
 GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
@@ -90,10 +93,16 @@ void handle_init(void) {
   mask->bitmap_background = gbitmap_create_with_resource(RESOURCE_ID_MASK_BG);
   // ** end setup mask }
 
+ 
   effect_layer_add_effect(effect_layer, effect_mask, mask);
   
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
-  
+
+  // display the FPS
+  fps_layer = effect_layer_create(GRect(0,0,144,168));
+  effect_layer_add_effect(fps_layer, effect_fps, &fps_params);
+  layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(fps_layer));
+
   //begin animation
   next_anim();
   
