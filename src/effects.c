@@ -134,7 +134,7 @@ void effect_rotate_90_degrees(GContext* ctx,  GRect position, void* param){
 // Added by Ron64
 // Parameter: Y zoom (high byte) X zoom(low byte),  0x10 no zoom 0x20 200% 0x08 50%, 
 // use the percentage macro EL_ZOOM(150,60). In this example: Y- zoom in 150%, X- zoom out to 60% 
-void effect_zoom(uint8_t *bd, int bpr, GRect position, void* param){
+void effect_zoom(GContext* ctx,  GRect position, void* param){
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
   uint8_t *bd =  gbitmap_get_data(fb);
   int bpr = gbitmap_get_bytes_per_row(fb);
@@ -166,7 +166,7 @@ void effect_zoom(uint8_t *bd, int bpr, GRect position, void* param){
 // Lens effect.
 // Added by Ron64
 // Parameters: lens focal(high byte) and object distance(low byte)
-void effect_lens(uint8_t *bd, int bpr, GRect position, void* param){
+void effect_lens(GContext* ctx,  GRect position, void* param){
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
   uint8_t *bd =  gbitmap_get_data(fb);
   int bpr = gbitmap_get_bytes_per_row(fb);
