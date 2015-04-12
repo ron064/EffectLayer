@@ -143,15 +143,17 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   GColor temp_pixel;  
   EffectMask *mask = (EffectMask *)param;
 
-  //drawing background
-  graphics_context_set_fill_color(ctx, mask->background_color);
-  graphics_context_set_stroke_color(ctx, mask->mask_color);
-  graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
+  //drawing background - only if real color is passed
+  if (!GColorEq(mask->background_color, GColorClear)) {
+    graphics_context_set_fill_color(ctx, mask->background_color);
+    graphics_context_set_stroke_color(ctx, mask->mask_color);
+    graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
+  }  
   
   //if text mask is used - drawing text
   if (mask->text) {
      graphics_draw_text(ctx, mask->text, mask->font, GRect(0, 0, position.size.w, position.size.h), mask->text_overflow, mask->text_align, NULL);
-  } else { // othersise - bitmap mask is used
+  } else if (mask->bitmap_mask) { // othersise - bitmap mask is used - draw bimap
      graphics_draw_bitmap_in_rect(ctx, mask->bitmap_mask, GRect(0, 0, position.size.w, position.size.h));
   }
     
