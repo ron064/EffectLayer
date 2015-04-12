@@ -175,3 +175,25 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   graphics_release_frame_buffer(ctx, fb);
   
 }
+
+void effect_fps(GContext* ctx, GRect position, void* param) {
+  static GFont font = NULL;
+  static char buff[16];
+  time_t tt;
+  uint16_t ms;
+  
+  if(((EffectFPS*)param)->starttt) {
+    time_ms(&tt,&ms);
+    ++((EffectFPS*)param)->frame;
+    uint32_t fp100s = (100000*((EffectFPS*)param)->frame)/((tt-((EffectFPS*)param)->starttt)*1000+ms-((EffectFPS*)param)->startms);
+    snprintf(buff,sizeof(buff),"FPS:%d.%02d",(int)fp100s/100,(int)fp100s%100);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_draw_text(ctx, buff, font, GRect(0, 0, position.size.w, position.size.h), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+  }
+  else {
+    // First call
+    if(!font) font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
+    time_ms(&((EffectFPS*)param)->starttt,&((EffectFPS*)param)->startms);
+    ((EffectFPS*)param)->frame = 0;
+  }
+}

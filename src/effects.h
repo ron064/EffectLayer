@@ -13,6 +13,12 @@ typedef struct {
   GTextAlignment  text_align; // alignment used for text masks
 } EffectMask;  
 
+typedef struct {
+  time_t  starttt; // time_t at the first refresh
+  uint16_t  startms; // ms at the first refresh
+  uint32_t  frame; // frame number
+} EffectFPS;  
+
 typedef void effect_cb(GContext* ctx, GRect position, void* param);
 
 // inverter effect.
@@ -47,3 +53,7 @@ effect_cb effect_blur;
 // mask effect.
 // see struct effect_mask for parameter description
 effect_cb effect_mask;
+
+// Just displays the average FPS of the app
+// Probably works better on a fullscreen effect layer so it can catch all redraw messages
+effect_cb effect_fps;
