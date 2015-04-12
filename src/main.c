@@ -78,8 +78,8 @@ void handle_init(void) {
   // ** { begin setup mask for MASK effect
   mask = malloc(sizeof(EffectMask));
 
-  mask->text = malloc(strlen("WWWW") + 1);
-  strcpy(mask->text, "WWWW");
+  mask->text = NULL; // not using text
+  mask->bitmap_mask = gbitmap_create_with_resource(RESOURCE_ID_MASK_SHAPE); // using bitmap mask instead
     
   mask->font = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
   mask->background_color = GColorBlack;
@@ -102,7 +102,7 @@ void handle_init(void) {
 void handle_deinit(void) {
   
   //clearning MASK
-  free(mask->text);
+  gbitmap_destroy(mask->bitmap_mask);
   gbitmap_destroy(mask->bitmap_background);
   free(mask);
   

@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/mask_mask.png",
+                "name": "MASK_SHAPE",
+                "type": "png"
+            },
+            {
                 "file": "images/mask_bg_bw.png",
                 "name": "MASK_BG",
                 "type": "png"

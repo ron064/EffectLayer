@@ -151,6 +151,8 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   //if text mask is used - drawing text
   if (mask->text) {
      graphics_draw_text(ctx, mask->text, mask->font, GRect(0, 0, position.size.w, position.size.h), mask->text_overflow, mask->text_align, NULL);
+  } else { // othersise - bitmap mask is used
+     graphics_draw_bitmap_in_rect(ctx, mask->bitmap_mask, GRect(0, 0, position.size.w, position.size.h));
   }
     
   //capturing framebuffer bitmap
