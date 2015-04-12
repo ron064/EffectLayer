@@ -34,8 +34,15 @@ static void blur_(uint8_t *bitmap_data, int bytes_per_row, GRect position, uint1
 }
 #endif
 
-void effect_blur(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param){
+void effect_blur(GContext* ctx,  GRect position, void* param){
 #ifdef PBL_COLOR
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+
+  
+  
   uint8_t radius = (uint8_t)(uint32_t)param; // Not very elegant... sorry
   uint8_t (*fb_a)[bytes_per_row] = (uint8_t (*)[bytes_per_row])bitmap_data;
   uint16_t offset_x = position.origin.x;
@@ -62,5 +69,7 @@ void effect_blur(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* 
   }
   
   free(buffer);
+  
+  graphics_release_frame_buffer(ctx, fb);
 #endif
 }

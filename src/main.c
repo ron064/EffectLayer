@@ -6,6 +6,7 @@ TextLayer *text_layer1, *text_layer2, *text_layer3, *text_layer4;
 PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
+EffectMask *mask;
 
 GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{40,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
@@ -55,10 +56,11 @@ void create_color_layer(TextLayer *text_layer, GRect coords, char text[], GColor
 
 void handle_init(void) {
   my_window = window_create();
+  window_set_background_color(my_window, GColorBlack);
   window_stack_push(my_window, true);
   
-  //creating colorful field
-  #ifdef PBL_COLOR
+  //creating colorful field (not doing this while testing MASK effect)
+  /*#ifdef PBL_COLOR
     create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorYellow, GColorRed);
     create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorCyan, GColorBlue);
     create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
@@ -68,24 +70,49 @@ void handle_init(void) {
     create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorWhite, GColorBlack);
     create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
     create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorBlack, GColorWhite);
-  #endif 
+  #endif */
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
+  
+  // ** { begin setup mask for MASK effect
+  mask = malloc(sizeof(EffectMask));
+
+  mask->text = NULL; // not using text
+  mask->bitmap_mask = gbitmap_create_with_resource(RESOURCE_ID_MASK_SHAPE); // using bitmap mask instead
+    
+  mask->font = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
+  mask->background_color = GColorBlack;
+  mask->mask_color = GColorWhite;
+  mask->text_align = GTextAlignmentCenter;
+  mask->text_overflow = GTextOverflowModeWordWrap;
+  
+  mask->bitmap_background = gbitmap_create_with_resource(RESOURCE_ID_MASK_BG);
+  // ** end setup mask }
+
 //  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
 //  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void*)true);
 //  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
 //  effect_layer_add_effect(effect_layer, effect_mirror_horizontal, NULL);
 //  effect_layer_add_effect(effect_layer, effect_blur, (void*)1);
 //  effect_layer_add_effect(effect_layer, effect_lens, EL_LENS((68-2)*2/3, (68-2)*4/9));
-  effect_layer_add_effect(effect_layer, effect_zoom, EL_ZOOM(200,60));
+//  effect_layer_add_effect(effect_layer, effect_zoom, EL_ZOOM(200,60));
+  effect_layer_add_effect(effect_layer, effect_mask, mask);
+  
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
   next_anim();
+  
 }
 
 void handle_deinit(void) {
+  
+  //clearning MASK
+  gbitmap_destroy(mask->bitmap_mask);
+  gbitmap_destroy(mask->bitmap_background);
+  free(mask);
+  
   text_layer_destroy(text_layer1);
   text_layer_destroy(text_layer1);
   text_layer_destroy(text_layer2);

@@ -1,8 +1,19 @@
 #pragma once
 #include <pebble.h>  
+  
+// structure of mask for masking effects
+typedef struct {
+  GBitmap*  bitmap_mask; // bitmap used for mask (when masking by bitmap)
+  GBitmap*  bitmap_background; // bitmap to show thru mask
+  GColor    mask_color; //color of the mask
+  GColor    background_color; // color of the background
+  char*     text; // text used for mask (when when masking by text)
+  GFont     font; // font used for text mask;
+  GTextOverflowMode text_overflow; // overflow used for text mask;
+  GTextAlignment  text_align; // alignment used for text masks
+} EffectMask;  
 
-typedef void effect_cb(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param);
-
+typedef void effect_cb(GContext* ctx, GRect position, void* param);
 
 // inverter effect.
 // Added by Yuriy Galanter
@@ -42,3 +53,8 @@ effect_cb effect_lens;
 
 #define EL_LENS(f,d) ((void*) ( d|(f<<8)))
 
+
+// mask effect.
+// Added by Yuriy Galanter
+// see struct effect_mask for parameter description
+effect_cb effect_mask;

@@ -32,7 +32,12 @@ uint8_t get_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x) {
   
 
 // inverter effect.
-void effect_invert(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
+void effect_invert(GContext* ctx,  GRect position, void* param) {
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+
   
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++)
@@ -41,11 +46,19 @@ void effect_invert(uint8_t *bitmap_data, int bytes_per_row, GRect position, void
         #else // on Aplite since only 1 and 0 is returning, doing "not" by 1 - pixel
           set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, 1 - get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x));
         #endif
+ 
+  graphics_release_frame_buffer(ctx, fb);          
+          
 }
 
 // vertical mirror effect.
-void effect_mirror_vertical(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
+void effect_mirror_vertical(GContext* ctx, GRect position, void* param) {
   uint8_t temp_pixel;  
+  
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
 
   for (int y = 0; y < position.size.h / 2 ; y++)
      for (int x = 0; x < position.size.w; x++){
@@ -53,12 +66,20 @@ void effect_mirror_vertical(uint8_t *bitmap_data, int bytes_per_row, GRect posit
         set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, get_pixel(bitmap_data, bytes_per_row, position.origin.y + position.size.h - y - 2, x + position.origin.x));
         set_pixel(bitmap_data, bytes_per_row, position.origin.y + position.size.h - y - 2, x + position.origin.x, temp_pixel);
      }
+  
+  graphics_release_frame_buffer(ctx, fb);
 }
 
 
 // horizontal mirror effect.
-void effect_mirror_horizontal(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param) {
+void effect_mirror_horizontal(GContext* ctx, GRect position, void* param) {
   uint8_t temp_pixel;  
+  
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+
 
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w / 2; x++){
@@ -66,13 +87,21 @@ void effect_mirror_horizontal(uint8_t *bitmap_data, int bytes_per_row, GRect pos
         set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, position.origin.x + position.size.w - x - 2));
         set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, position.origin.x + position.size.w - x - 2, temp_pixel);
      }
+  
+  graphics_release_frame_buffer(ctx, fb);
 }
 
 // Rotate 90 degrees
 // Added by Ron64
 // Parameter:  true: rotate right/clockwise,  false: rotate left/counter_clockwise
-void effect_rotate_90_degrees(uint8_t *bitmap_data, int bytes_per_row, GRect position, void* param){
-  bool right = (bool)(uint32_t)param;
+void effect_rotate_90_degrees(GContext* ctx,  GRect position, void* param){
+
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+
+  bool right = (bool)param;
   uint8_t qtr, xCn, yCn, temp_pixel;
   xCn= position.origin.x + position.size.w /2;
   yCn= position.origin.y + position.size.h /2;
@@ -97,14 +126,19 @@ void effect_rotate_90_degrees(uint8_t *bitmap_data, int bytes_per_row, GRect pos
         set_pixel(bitmap_data, bytes_per_row, yCn -c2, xCn +c1, temp_pixel);
       }
      }
+  
+  graphics_release_frame_buffer(ctx, fb);
 }
-
 
 // Zoom effect.
 // Added by Ron64
 // Parameter: Y zoom (high byte) X zoom(low byte),  0x10 no zoom 0x20 200% 0x08 50%, 
 // use the percentage macro EL_ZOOM(150,60). In this example: Y- zoom in 150%, X- zoom out to 60% 
-void effect_zoom(uint8_t *bd, int bpr, GRect position, void* param){
+void effect_zoom(GContext* ctx,  GRect position, void* param){
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bd =  gbitmap_get_data(fb);
+  int bpr = gbitmap_get_bytes_per_row(fb);
+
   uint8_t xCn, yCn, Y1,X1, ratioY, ratioX;
   xCn= position.origin.x + position.size.w /2;
   yCn= position.origin.y + position.size.h /2;
@@ -125,13 +159,17 @@ void effect_zoom(uint8_t *bd, int bpr, GRect position, void* param){
       set_pixel(bd,bpr, yCn -yS, xCn +xS, get_pixel(bd,bpr, yCn -Y1, xCn +X1));
       set_pixel(bd,bpr, yCn -yS, xCn -xS, get_pixel(bd,bpr, yCn -Y1, xCn -X1));
     }
+  graphics_release_frame_buffer(ctx, fb);
 //Todo: Should probably reduce Y size on zoom out or limit reading beyond edge of screen.
 }
 
 // Lens effect.
 // Added by Ron64
 // Parameters: lens focal(high byte) and object distance(low byte)
-void effect_lens(uint8_t *bd, int bpr, GRect position, void* param){
+void effect_lens(GContext* ctx,  GRect position, void* param){
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bd =  gbitmap_get_data(fb);
+  int bpr = gbitmap_get_bytes_per_row(fb);
   uint8_t d,r, xCn, yCn;
 
   xCn= position.origin.x + position.size.w /2;
@@ -154,5 +192,45 @@ void effect_lens(uint8_t *bd, int bpr, GRect position, void* param){
         set_pixel(bd,bpr, yCn -y, xCn +x, get_pixel(bd,bpr, yCn -Y1, xCn +X1));
         set_pixel(bd,bpr, yCn -y, xCn -x, get_pixel(bd,bpr, yCn -Y1, xCn -X1));
       }
+    graphics_release_frame_buffer(ctx, fb);
 //Todo: Change to lock-up arcsin table in the future. (Currently using floating point math library that is relatively big & slow)
+}
+  
+// mask effect.
+// see struct effect_mask for parameter description  
+void effect_mask(GContext* ctx, GRect position, void* param) {
+  GColor temp_pixel;  
+  EffectMask *mask = (EffectMask *)param;
+
+  //drawing background
+  graphics_context_set_fill_color(ctx, mask->background_color);
+  graphics_context_set_stroke_color(ctx, mask->mask_color);
+  graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
+  
+  //if text mask is used - drawing text
+  if (mask->text) {
+     graphics_draw_text(ctx, mask->text, mask->font, GRect(0, 0, position.size.w, position.size.h), mask->text_overflow, mask->text_align, NULL);
+  } else { // otherwise - bitmap mask is used
+     graphics_draw_bitmap_in_rect(ctx, mask->bitmap_mask, GRect(0, 0, position.size.w, position.size.h));
+  }
+    
+  //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+  
+  //capturing background bitmap
+  uint8_t *bg_bitmap_data =  gbitmap_get_data(mask->bitmap_background);
+  int bg_bytes_per_row = gbitmap_get_bytes_per_row(mask->bitmap_background);
+    
+  //looping throughout layer replacing mask with bg bitmap
+  for (int y = 0; y < position.size.h; y++)
+     for (int x = 0; x < position.size.w; x++) {
+       temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
+       if (GColorEq(temp_pixel, mask->mask_color))
+         set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, get_pixel(bg_bitmap_data, bg_bytes_per_row, y + position.origin.y, x + position.origin.x));
+  }
+  
+  graphics_release_frame_buffer(ctx, fb);
+  
 }
