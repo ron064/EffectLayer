@@ -7,7 +7,7 @@ PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
 
-GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
+GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{40,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
 
 // on animation stop callback create next animation
@@ -22,7 +22,7 @@ void next_anim() {
   anim_count++;
   if (anim_count == 4)  anim_count = 0; // if we finished all animation points - start from the beginning
   
-  #ifndef PBL_COLOR // Applite doesn't automatically destroy animation, we need to do it
+  #ifndef PBL_COLOR // Aplite doesn't automatically destroy animation, we need to do it
     if (anim)  property_animation_destroy(anim);
   #endif
   
@@ -72,11 +72,13 @@ void handle_init(void) {
   
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
-  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
-  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void*)true);
+//  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
+//  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void*)true);
 //  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
 //  effect_layer_add_effect(effect_layer, effect_mirror_horizontal, NULL);
-  effect_layer_add_effect(effect_layer, effect_blur, (void*)1);
+//  effect_layer_add_effect(effect_layer, effect_blur, (void*)1);
+//  effect_layer_add_effect(effect_layer, effect_lens, EL_LENS((68-2)*2/3, (68-2)*4/9));
+  effect_layer_add_effect(effect_layer, effect_zoom, EL_ZOOM(200,60));
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
