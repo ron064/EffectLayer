@@ -6,12 +6,9 @@ TextLayer *text_layer1, *text_layer2, *text_layer3, *text_layer4;
 PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
-EffectMask *mask;
-EffectLayer* fps_layer;
+EffectMask mask;
 
-EffectFPS fps_params = {.starttt = 0};
-
-GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{40,87}, {68,80}}, {{2,2},{68,80}}};
+GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
 
 // on animation stop callback create next animation
@@ -78,14 +75,12 @@ void handle_init(void) {
   //creating effect layer
   effect_layer = effect_layer_create(GRect(2,2,68,80));
   
-//  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
-//  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void*)true);
-//  effect_layer_add_effect(effect_layer, effect_mirror_vertical, NULL);
-//  effect_layer_add_effect(effect_layer, effect_mirror_horizontal, NULL);
-//  effect_layer_add_effect(effect_layer, effect_blur, (void*)1);
-  effect_layer_add_effect(effect_layer, effect_lens, EL_LENS((68-2)*2/3, (68-2)*4/9));
-  //effect_layer_add_effect(effect_layer, effect_zoom, EL_ZOOM(200,60));
-  
+  mask.mask_color = GColorWhite;
+  mask.background_color = GColorBlack;
+  mask.bitmap_mask = gbitmap_create_with_resource(RESOURCE_ID_MASK_SHAPE);
+  mask.bitmap_background = gbitmap_create_with_resource(RESOURCE_ID_MASK_BG);
+    
+  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void *)true);
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
@@ -96,9 +91,9 @@ void handle_init(void) {
 void handle_deinit(void) {
   
   //clearning MASK
-  gbitmap_destroy(mask->bitmap_mask);
-  gbitmap_destroy(mask->bitmap_background);
-  free(mask);
+  gbitmap_destroy(mask.bitmap_mask);
+  gbitmap_destroy(mask.bitmap_background);
+
   
   text_layer_destroy(text_layer1);
   text_layer_destroy(text_layer1);

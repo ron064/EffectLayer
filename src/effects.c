@@ -4,13 +4,11 @@
 
 // set pixel color at given coordinates 
 void set_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x, uint8_t color) {
-  
-  uint8_t (*fb_a)[bytes_per_row] = (uint8_t (*)[bytes_per_row])bitmap_data;
-  
+      
   #ifdef PBL_COLOR 
-    fb_a[y][x] = color; // in Basalt - simple set entire byte
+    bitmap_data[y*bytes_per_row + x] = color; // in Basalt - simple set entire byte
   #else
-    fb_a[y][x / 8] ^= (-color ^ fb_a[y][x / 8]) & (1 << (x % 8)); // in Aplite - set the bit
+    bitmap_data[y*bytes_per_row + x / 8] ^= (-color ^ bitmap_data[y*bytes_per_row + x / 8]) & (1 << (x % 8)); // in Aplite - set the bit
   #endif
 }
 
@@ -20,12 +18,10 @@ void set_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x, uint8_t co
 // get pixel color at given coordinates 
 uint8_t get_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x) {
   
-  uint8_t (*fb_a)[bytes_per_row] = (uint8_t (*)[bytes_per_row])bitmap_data;
-  
   #ifdef PBL_COLOR
-    return fb_a[y][x]; // in Basalt - simple get entire byte
+    return bitmap_data[y*bytes_per_row + x]; // in Basalt - simple get entire byte
   #else
-    return (fb_a[y][x / 8] >> (x % 8)) & 1; // in Aplite - get the bit
+    return (bitmap_data[y*bytes_per_row + x / 8] >> (x % 8)) & 1; // in Aplite - get the bit
   #endif
 }
   
@@ -205,12 +201,12 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   //drawing background - only if real color is passed
   if (!GColorEq(mask->background_color, GColorClear)) {
     graphics_context_set_fill_color(ctx, mask->background_color);
-    graphics_context_set_stroke_color(ctx, mask->mask_color);
     graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
   }  
   
   //if text mask is used - drawing text
   if (mask->text) {
+     graphics_context_set_text_color(ctx, mask->mask_color);
      graphics_draw_text(ctx, mask->text, mask->font, GRect(0, 0, position.size.w, position.size.h), mask->text_overflow, mask->text_align, NULL);
   } else if (mask->bitmap_mask) { // othersise - bitmap mask is used - draw bimap
      graphics_draw_bitmap_in_rect(ctx, mask->bitmap_mask, GRect(0, 0, position.size.w, position.size.h));
