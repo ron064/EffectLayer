@@ -2,6 +2,11 @@
 
 To use the library place the source files in your SRC directory and add <code>#include "effect_layer.h"</code> to your source. EffectLayer library is implemented in efficient pay-to-play way so only effects that you actualy use get compiled into your binary.
 
+![Inverter](http://i.imgur.com/6t9r3qa.gif "Inverter")
+![Bitmap Mask](http://i.imgur.com/JspSsx1.gif "Bitmap Mask")
+![Text Mask](http://i.imgur.com/EdKu49w.png "Text Mask")
+
+
 Currently supported effects:
 <ul>
 <li>Invert</li>
