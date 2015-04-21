@@ -17,7 +17,7 @@ Currently supported effects:
 <hr>
 <h3>Functions</h3>
 
-<code>EffectLayer* effect_layer_create(GRect frame)</code> - creates effect layer and returns pointer to it. Parameter is GRect with coordinates and layer size, for example <code>EffectLayer* effect_layer_create(GRect(0, 0, 144, 168));</code> will cover entire screen
+<code>EffectLayer* effect_layer_create(GRect frame)</code> - creates effect layer and returns pointer to it. Parameter is GRect with coordinates and layer size, for example <code>EffectLayer* effect_layer = effect_layer_create(GRect(0, 0, 144, 168));</code> will cover entire screen
 
 <code>void effect_layer_destroy(EffectLayer *effect_layer)</code> - destroys effect layer and frees memory.
 
