@@ -71,6 +71,6 @@ you can add it to EffectLayer in maner similar to above:
 
 <h3>Usage examples</h3>
 
-<a href="https://github.com/ygalanter/SimpleStriped">Simple Striped watchface</a> uses Mask effect to show background image thru transparent text
+<a href="https://github.com/ygalanter/SimpleStriped">Simple Striped watchface</a> uses Mask effect to show background image thru transparent text<br>
 <a href="https://github.com/ygalanter/Tv-Time">TV Time watchaface</a> uses inverter effect for battery info and blur effect for antialiasing fonts</a>
 
