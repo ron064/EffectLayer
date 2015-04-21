@@ -68,3 +68,9 @@ Library is user-extendable, if you define your function in format
 you can add it to EffectLayer in maner similar to above:
 
 <code>effect_layer_add_effect(my_effect_layer, effect_my_own_cool_effect, param);</code> 
+
+<h3>Usage examples</h3>
+
+<a href="https://github.com/ygalanter/SimpleStriped">Simple Striped watchface</a> uses Mask effect to show background image thru transparent text
+<a href="https://github.com/ygalanter/Tv-Time">TV Time watchaface</a> uses inverter effect for battery info and blur effect for antialiasing fonts</a>
+
