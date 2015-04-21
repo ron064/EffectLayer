@@ -7,7 +7,7 @@ Currently supported effects:
 <li>Invert</li>
 <li>Vertical Mirror</li>
 <li>Horizontal Mirror</li>
-<li>Rotate 90 degrees (counter- or clock-wise</li>
+<li>Rotate 90 degrees (counter- or clock-wise)</li>
 <li>Blur</li>
 <li>Zoom</li>
 <li>Lens</li>
