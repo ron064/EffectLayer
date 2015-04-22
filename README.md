@@ -18,6 +18,7 @@ Currently supported effects:
 <li>Lens</li>
 <li>Mask</li>
 <li>FPS</li>
+<li>Shadow</li>
 </ul>
 <hr>
 <h3>Functions</h3>
@@ -39,6 +40,7 @@ Currently supported effects:
 <li>effect_lens</li>
 <li>effect_mask</li>
 <li>effect_fps</li>
+<li>effect_shadow</li>
 </ul>
 
 <h3>Usage</h3>
@@ -63,6 +65,24 @@ clockwise
 <code>effect_layer_add_effect(my_effect_layer, effect_mask, mask);</code> - Applies Mask, achieving various transparency effects. See <a href="http://codecorner.galanter.net/2015/04/15/mask-effect-for-effectlayer-for-pebble/" target="_blank">this article</a> on usage examples.
 
 <code>effect_layer_add_effect(my_effect_layer, effect_fps, EffectFPS);</code> - displays average FPS of the app
+
+<code>effect_layer_add_effect(my_effect_layer, effect_shadow, &shadow);</code> - adds shadow of a given color to objects on screen of given color. <code>shadow</code> is a parameter of type <code>EffectOffset</code>:
+```c
+typedef struct {
+   GColor orig_color; //color of pixel being ofset
+   GColor offset_color; //new color of pixel at offset coords
+   int8_t offset_x; // horizontal ofset
+   int8_t offset_y; // vertical offset
+} EffectOffset;
+```   
+For example if you want to give all red text under layer a yellow shadow 2 pixels long, you parameter would be:
+```c
+EffectOffset shadow;
+shadow.orig_color = GColorRed;
+shadow.offset_color = GColorYellow;
+shadow.offset_y = 2;  
+shadow.offset_x = 2;
+```
 
 <h3>Extentions</h3>
 
