@@ -193,7 +193,7 @@ void effect_lens(GContext* ctx,  GRect position, void* param){
 }
   
 // mask effect.
-// see struct effect_mask for parameter description  
+// see struct EffectMask for parameter description  
 void effect_mask(GContext* ctx, GRect position, void* param) {
   GColor temp_pixel;  
   EffectMask *mask = (EffectMask *)param;
@@ -254,3 +254,43 @@ void effect_fps(GContext* ctx, GRect position, void* param) {
     ((EffectFPS*)param)->frame = 0;
   }
 }
+
+
+// mask effect.
+// see struct EffecOffset for parameter description  
+void effect_shadow(GContext* ctx, GRect position, void* param) {
+  GColor temp_pixel;  
+  int shadow_x, shadow_y;
+  EffectOffset *shadow = (EffectOffset *)param;
+  
+   //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+  
+  //looping throughout making shadow
+  for (int y = 0; y < position.size.h; y++)
+     for (int x = 0; x < position.size.w; x++) {
+       temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
+       
+       if (GColorEq(temp_pixel, shadow->orig_color)) {
+         shadow_x =  x + position.origin.x + shadow->offset_x;
+         shadow_y =  y + position.origin.y + shadow->offset_y;
+         
+         if (shadow_x >= 0 && shadow_x <=144 && shadow_y >= 0 && shadow_y <= 168) {
+           
+             temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, shadow_y, shadow_x);
+             if (!GColorEq(temp_pixel, shadow->orig_color)) {
+               #ifdef PBL_COLOR
+                  set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, shadow->offset_color.argb);  
+               #else
+                  set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0);
+               #endif
+             }
+         }
+       }
+  }
+         
+  graphics_release_frame_buffer(ctx, fb);
+  
+}  

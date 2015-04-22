@@ -13,11 +13,20 @@ typedef struct {
   GTextAlignment  text_align; // alignment used for text masks
 } EffectMask;  
 
+// structure for FPS effect
 typedef struct {
   time_t  starttt; // time_t at the first refresh
   uint16_t  startms; // ms at the first refresh
   uint32_t  frame; // frame number
 } EffectFPS;  
+
+// structure for effect at given offset (currently used for effect_shadow)
+typedef struct {
+  GColor orig_color; //color of pixel being ofset
+  GColor offset_color; //new color of pixel at offset coords
+  int8_t offset_x; // horizontal ofset
+  int8_t offset_y; // vertical offset
+} EffectOffset;  
 
 typedef void effect_cb(GContext* ctx, GRect position, void* param);
 
@@ -62,9 +71,14 @@ effect_cb effect_lens;
 
 // mask effect.
 // Added by Yuriy Galanter
-// see struct effect_mask for parameter description
+// see struct EffectMask for parameter description
 effect_cb effect_mask;
 
 // Just displays the average FPS of the app
 // Probably works better on a fullscreen effect layer so it can catch all redraw messages
 effect_cb effect_fps;
+
+// shadow effect
+// Added by Yuriy Galanter
+// uses EffecOffset as a parameter;
+effect_cb effect_shadow;
