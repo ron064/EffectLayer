@@ -28,12 +28,6 @@ typedef struct {
   int8_t offset_y; // vertical offset
 } EffectOffset;  
 
-typedef struct {
-  GColor orig_color; //color of pixel being ofset
-  GColor outline_color; // color of the outline
-  int8_t width; // width in pixels
-} EffectWidth;
-
 typedef void effect_cb(GContext* ctx, GRect position, void* param);
 
 // inverter effect.

@@ -299,7 +299,7 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
   GColor temp_pixel;  
   int outlinex[4];
   int outliney[4];
-  EffectWidth *outline = (EffectWidth *)param;
+  EffectOffset *outline = (EffectOffset *)param;
   
    //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
@@ -313,14 +313,14 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
        
        if (GColorEq(temp_pixel, outline->orig_color)) {
           // TODO: there's probably a more efficient way to do this
-          outlinex[0] = x + position.origin.x - outline->width;
-          outliney[0] = y + position.origin.y - outline->width;
-          outlinex[1] = x + position.origin.x + outline->width;
-          outliney[1] = y + position.origin.y + outline->width;
-          outlinex[2] = x + position.origin.x - outline->width;
-          outliney[2] = y + position.origin.y + outline->width;
-          outlinex[3] = x + position.origin.x + outline->width;
-          outliney[3] = y + position.origin.y - outline->width;
+          outlinex[0] = x + position.origin.x - outline->offset_x;
+          outliney[0] = y + position.origin.y - outline->offset_y;
+          outlinex[1] = x + position.origin.x + outline->offset_x;
+          outliney[1] = y + position.origin.y + outline->offset_y;
+          outlinex[2] = x + position.origin.x - outline->offset_x;
+          outliney[2] = y + position.origin.y + outline->offset_y;
+          outlinex[3] = x + position.origin.x + outline->offset_x;
+          outliney[3] = y + position.origin.y - outline->offset_y;
           
          
           for (int i = 0; i < 4; i++) {
@@ -329,9 +329,9 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
               temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i]);
               if (!GColorEq(temp_pixel, outline->orig_color)) {
                 #ifdef PBL_COLOR
-                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], outline->outline_color.argb);  
+                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], outline->offset_color.argb);  
                 #else
-                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], GColorEq(outline->outline_color, GColorWhite)? 1 : 0);
+                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], GColorEq(outline->offset_color, GColorWhite)? 1 : 0);
                 #endif
               }
             }
