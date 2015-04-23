@@ -26,6 +26,7 @@ typedef struct {
   GColor offset_color; //new color of pixel at offset coords
   int8_t offset_x; // horizontal ofset
   int8_t offset_y; // vertical offset
+  int8_t option; // optional parameter (currently in effect_shadow 1=draw long shadow)
 } EffectOffset;  
 
 typedef void effect_cb(GContext* ctx, GRect position, void* param);

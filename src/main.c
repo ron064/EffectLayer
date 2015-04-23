@@ -84,11 +84,13 @@ void handle_init(void) {
     outline.offset_color = GColorBlack;
   #endif
   
-  outline.offset_x = 1;
-  outline.offset_y = 2;
+  outline.offset_x = 50;
+  outline.offset_y = 50;
+  
+  outline.option = 0;
   
   // adding shadow effect
-  effect_layer_add_effect(effect_layer, effect_outline, &outline);
+  effect_layer_add_effect(effect_layer, effect_shadow, &outline);
   
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   

@@ -1,6 +1,9 @@
 #include <pebble.h>
 #include "effects.h"
 #include "math.h"
+  
+  
+// { ********* Graphics utility functions (probablu should be seaparated into anothe file?) *********
 
 // set pixel color at given coordinates 
 void set_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x, uint8_t color) {
@@ -12,9 +15,6 @@ void set_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x, uint8_t co
   #endif
 }
 
-
-
-
 // get pixel color at given coordinates 
 uint8_t get_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x) {
   
@@ -24,7 +24,75 @@ uint8_t get_pixel(uint8_t *bitmap_data, int bytes_per_row, int y, int x) {
     return (bitmap_data[y*bytes_per_row + x / 8] >> (x % 8)) & 1; // in Aplite - get the bit
   #endif
 }
+ 
+
+// THE EXTREMELY FAST LINE ALGORITHM Variation E (Addition Fixed Point PreCalc Small Display)
+// Small Display (256x256) resolution.
+// based on algorythm by Po-Han Lin at http://www.edepot.com
+void set_line(uint8_t *bitmap_data, int bytes_per_row, int y, int x, int y2, int x2, uint8_t draw_color, uint8_t skip_color) {
+  bool yLonger = false;	int shortLen=y2-y; int longLen=x2-x;
+  uint8_t temp_pixel;  int temp_x, temp_y;
   
+	if (abs(shortLen)>abs(longLen)) {
+		int swap=shortLen;
+		shortLen=longLen;	longLen=swap;	yLonger=true;
+	}
+  
+	int decInc;
+	if (longLen==0) decInc=0;
+	else decInc = (shortLen << 8) / longLen;
+
+	if (yLonger) {
+		if (longLen>0) {
+			longLen+=y;
+			for (int j=0x80+(x<<8);y<=longLen;++y) {
+        temp_y = y; temp_x = j >> 8;
+        if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
+          temp_pixel = get_pixel(bitmap_data, bytes_per_row,  temp_y, temp_x);
+          if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row,  y, j >> 8, draw_color);
+        }
+				j+=decInc;
+			}
+			return;
+		}
+		longLen+=y;
+		for (int j=0x80+(x<<8);y>=longLen;--y) {
+      temp_y = y; temp_x = j >> 8;
+      if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
+        temp_pixel = get_pixel(bitmap_data, bytes_per_row,  temp_y, temp_x);
+        if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row,  y, j >> 8, draw_color);
+      }
+			j-=decInc;
+		}
+		return;	
+	}
+
+	if (longLen>0) {
+		longLen+=x;
+		for (int j=0x80+(y<<8);x<=longLen;++x) {
+      temp_y = j >> 8; temp_x =  x;
+      if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
+        temp_pixel = get_pixel(bitmap_data, bytes_per_row, temp_y, temp_x);
+        if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row, temp_y, temp_x, draw_color);
+      }  
+			j+=decInc;
+		}
+		return;
+	}
+	longLen+=x;
+	for (int j=0x80+(y<<8);x>=longLen;--x) {
+	  temp_y = j >> 8; temp_x =  x;
+    if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
+      temp_pixel = get_pixel(bitmap_data, bytes_per_row, temp_y, temp_x);
+      if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row, temp_y, temp_x, draw_color);
+    }  
+		j-=decInc;
+	}
+
+}
+
+//  ********* Graphics utility functions (probablu should be seaparated into anothe file?) ********* }
+
   
 
 // inverter effect.
@@ -277,17 +345,30 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
          shadow_x =  x + position.origin.x + shadow->offset_x;
          shadow_y =  y + position.origin.y + shadow->offset_y;
          
-         if (shadow_x >= 0 && shadow_x <=144 && shadow_y >= 0 && shadow_y <= 168) {
+         if (shadow->option == 1) {
+            #ifdef PBL_COLOR
+               set_line(bitmap_data, bytes_per_row, y, x, shadow_y, shadow_x, shadow->offset_color.argb, shadow->orig_color.argb);
+            #else
+               set_line(bitmap_data, bytes_per_row, y, x, shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0, GColorEq(shadow->orig_color, GColorWhite)? 1 : 0); 
+            #endif
            
-             temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, shadow_y, shadow_x);
-             if (!GColorEq(temp_pixel, shadow->orig_color)) {
-               #ifdef PBL_COLOR
-                  set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, shadow->offset_color.argb);  
-               #else
-                  set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0);
-               #endif
+         } else {
+           
+             if (shadow_x >= 0 && shadow_x <=143 && shadow_y >= 0 && shadow_y <= 167) {
+             
+               temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, shadow_y, shadow_x);
+               if (!GColorEq(temp_pixel, shadow->orig_color) & !GColorEq(temp_pixel, shadow->offset_color) ) {
+                 #ifdef PBL_COLOR
+                    set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, shadow->offset_color.argb);  
+                 #else
+                    set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0);
+                 #endif
+               }
              }
+           
          }
+         
+         
        }
   }
          
