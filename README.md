@@ -19,6 +19,7 @@ Currently supported effects:
 <li>Mask</li>
 <li>FPS</li>
 <li>Shadow</li>
+<li>Outline</li>
 </ul>
 <hr>
 <h3>Functions</h3>
@@ -41,6 +42,7 @@ Currently supported effects:
 <li>effect_mask</li>
 <li>effect_fps</li>
 <li>effect_shadow</li>
+<li>effect_outline</li>
 </ul>
 
 <h3>Usage</h3>
@@ -83,6 +85,8 @@ shadow.offset_color = GColorYellow;
 shadow.offset_y = 2;  
 shadow.offset_x = 2;
 ```
+
+<code>effect_layer_add_effect(my_effect_layer, effect_outline, &shadow);</code> - Similar to the Shadow effect, however the color is added in all directions.
 
 <h3>Extentions</h3>
 

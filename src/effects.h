@@ -82,3 +82,5 @@ effect_cb effect_fps;
 // Added by Yuriy Galanter
 // uses EffecOffset as a parameter;
 effect_cb effect_shadow;
+
+effect_cb effect_outline;

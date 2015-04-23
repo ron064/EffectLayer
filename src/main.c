@@ -6,7 +6,7 @@ TextLayer *text_layer1, *text_layer2, *text_layer3, *text_layer4;
 PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
-EffectOffset shadow;
+EffectOffset outline;
 
 GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
@@ -75,20 +75,20 @@ void handle_init(void) {
   //creating effect layer
   effect_layer = effect_layer_create(GRect(0,0,144,168));
   
-  //creating shadow param
+  //creating outline param
   #ifdef PBL_COLOR
-    shadow.orig_color = GColorChromeYellow;
-    shadow.offset_color = GColorBulgarianRose;
+    outline.orig_color = GColorChromeYellow;
+    outline.offset_color = GColorRed;
   #else
-    shadow.orig_color = GColorWhite;
-    shadow.offset_color = GColorBlack;
+    outline.orig_color = GColorWhite;
+    outline.offset_color = GColorBlack;
   #endif
   
-  shadow.offset_y = 2;  
-  shadow.offset_x = 2;
+  outline.offset_x = 1;
+  outline.offset_y = 2;
   
   // adding shadow effect
-  effect_layer_add_effect(effect_layer, effect_shadow, &shadow);
+  effect_layer_add_effect(effect_layer, effect_outline, &outline);
   
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
