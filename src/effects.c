@@ -293,4 +293,51 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
          
   graphics_release_frame_buffer(ctx, fb);
   
-}  
+}
+
+void effect_outline(GContext* ctx, GRect position, void* param) {
+  GColor temp_pixel;  
+  int outlinex[4];
+  int outliney[4];
+  EffectWidth *outline = (EffectWidth *)param;
+  
+   //capturing framebuffer bitmap
+  GBitmap *fb = graphics_capture_frame_buffer(ctx);
+  uint8_t *bitmap_data =  gbitmap_get_data(fb);
+  int bytes_per_row = gbitmap_get_bytes_per_row(fb);
+  
+  //loop through pixels from framebuffer
+  for (int y = 0; y < position.size.h; y++)
+     for (int x = 0; x < position.size.w; x++) {
+       temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
+       
+       if (GColorEq(temp_pixel, outline->orig_color)) {
+          // TODO: there's probably a more efficient way to do this
+          outlinex[0] = x + position.origin.x - outline->width;
+          outliney[0] = y + position.origin.y - outline->width;
+          outlinex[1] = x + position.origin.x + outline->width;
+          outliney[1] = y + position.origin.y + outline->width;
+          outlinex[2] = x + position.origin.x - outline->width;
+          outliney[2] = y + position.origin.y + outline->width;
+          outlinex[3] = x + position.origin.x + outline->width;
+          outliney[3] = y + position.origin.y - outline->width;
+          
+         
+          for (int i = 0; i < 4; i++) {
+            // TODO: centralize the constants
+            if (outlinex[i] >= 0 && outlinex[i] <=144 && outliney[i] >= 0 && outliney[i] <= 168) {
+              temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i]);
+              if (!GColorEq(temp_pixel, outline->orig_color)) {
+                #ifdef PBL_COLOR
+                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], outline->outline_color.argb);  
+                #else
+                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], GColorEq(outline->outline_color, GColorWhite)? 1 : 0);
+                #endif
+              }
+            }
+          }
+       }
+  }
+
+  graphics_release_frame_buffer(ctx, fb);
+}
