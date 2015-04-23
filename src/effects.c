@@ -49,7 +49,7 @@ void set_line(uint8_t *bitmap_data, int bytes_per_row, int y, int x, int y2, int
         temp_y = y; temp_x = j >> 8;
         if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
           temp_pixel = get_pixel(bitmap_data, bytes_per_row,  temp_y, temp_x);
-          if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row,  y, j >> 8, draw_color);
+          if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row, temp_y, temp_x, draw_color);
         }
 				j+=decInc;
 			}
@@ -60,7 +60,7 @@ void set_line(uint8_t *bitmap_data, int bytes_per_row, int y, int x, int y2, int
       temp_y = y; temp_x = j >> 8;
       if (temp_y >=0 && temp_y<168 && temp_x >=0 && temp_x < 144) {
         temp_pixel = get_pixel(bitmap_data, bytes_per_row,  temp_y, temp_x);
-        if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row,  y, j >> 8, draw_color);
+        if (temp_pixel != skip_color && temp_pixel != draw_color) set_pixel(bitmap_data, bytes_per_row,  temp_y, temp_x, draw_color);
       }
 			j-=decInc;
 		}
@@ -347,9 +347,9 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
          
          if (shadow->option == 1) {
             #ifdef PBL_COLOR
-               set_line(bitmap_data, bytes_per_row, y, x, shadow_y, shadow_x, shadow->offset_color.argb, shadow->orig_color.argb);
+               set_line(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, shadow_y, shadow_x, shadow->offset_color.argb, shadow->orig_color.argb);
             #else
-               set_line(bitmap_data, bytes_per_row, y, x, shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0, GColorEq(shadow->orig_color, GColorWhite)? 1 : 0); 
+               set_line(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0, GColorEq(shadow->orig_color, GColorWhite)? 1 : 0); 
             #endif
            
          } else {

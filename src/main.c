@@ -73,7 +73,7 @@ void handle_init(void) {
   #endif 
   
   //creating effect layer
-  effect_layer = effect_layer_create(GRect(0,0,144,168));
+  effect_layer = effect_layer_create(GRect(73,85,70,82));
   
   //creating outline param
   #ifdef PBL_COLOR
@@ -87,7 +87,7 @@ void handle_init(void) {
   outline.offset_x = 50;
   outline.offset_y = 50;
   
-  outline.option = 0;
+  outline.option = 1;
   
   // adding shadow effect
   effect_layer_add_effect(effect_layer, effect_shadow, &outline);
