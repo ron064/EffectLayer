@@ -85,6 +85,7 @@ shadow.offset_color = GColorYellow;
 shadow.offset_y = 2;  
 shadow.offset_x = 2;
 ```
+You can specify option in the parameter <code>shadow.option = 1;</code> to display long contiuous shadow (to use this on Aplite you also need to specify <code>shadow.aplite_visited</code> array to keep track of set pixels. See <a href="Color Shadow">https://github.com/ygalanter/Color_Shadow/</a> watchface for example implementation.
 
 <code>effect_layer_add_effect(my_effect_layer, effect_outline, &shadow);</code> - Similar to the Shadow effect, however the color is added in all directions.
 
