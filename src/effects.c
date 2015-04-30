@@ -299,7 +299,7 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   EffectMask *mask = (EffectMask *)param;
 
   //drawing background - only if real color is passed
-  if (!GColorEq(mask->background_color, GColorClear)) {
+  if (!gcolor_equal(mask->background_color, GColorClear)) {
     graphics_context_set_fill_color(ctx, mask->background_color);
     graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
   }  
@@ -325,7 +325,7 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++) {
        temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
-       if (GColorEq(temp_pixel, mask->mask_color))
+       if (gcolor_equal(temp_pixel, mask->mask_color))
          set_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x, get_pixel(bg_bitmap_data, bg_bytes_per_row, y + position.origin.y, x + position.origin.x));
   }
   
@@ -364,8 +364,8 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
   EffectOffset *shadow = (EffectOffset *)param;
   
   #ifndef PBL_COLOR
-    uint8_t draw_color = GColorEq(shadow->offset_color, GColorWhite)? 1 : 0;
-    uint8_t skip_color = GColorEq(shadow->orig_color, GColorWhite)? 1 : 0;
+    uint8_t draw_color = gcolor_equal(shadow->offset_color, GColorWhite)? 1 : 0;
+    uint8_t skip_color = gcolor_equal(shadow->orig_color, GColorWhite)? 1 : 0;
   #endif
   
    //capturing framebuffer bitmap
@@ -379,7 +379,7 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
      for (int x = 0; x < position.size.w; x++) {
        temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
        
-       if (GColorEq(temp_pixel, shadow->orig_color)) {
+       if (gcolor_equal(temp_pixel, shadow->orig_color)) {
          shadow_x =  x + position.origin.x + shadow->offset_x;
          shadow_y =  y + position.origin.y + shadow->offset_y;
          
@@ -395,11 +395,11 @@ void effect_shadow(GContext* ctx, GRect position, void* param) {
              if (shadow_x >= 0 && shadow_x <=143 && shadow_y >= 0 && shadow_y <= 167) {
              
                temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, shadow_y, shadow_x);
-               if (!GColorEq(temp_pixel, shadow->orig_color) & !GColorEq(temp_pixel, shadow->offset_color) ) {
+               if (!gcolor_equal(temp_pixel, shadow->orig_color) & !gcolor_equal(temp_pixel, shadow->offset_color) ) {
                  #ifdef PBL_COLOR
                     set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, shadow->offset_color.argb);  
                  #else
-                    set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, GColorEq(shadow->offset_color, GColorWhite)? 1 : 0);
+                    set_pixel(bitmap_data, bytes_per_row,  shadow_y, shadow_x, gcolor_equal(shadow->offset_color, GColorWhite)? 1 : 0);
                  #endif
                }
              }
@@ -430,7 +430,7 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
      for (int x = 0; x < position.size.w; x++) {
        temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, y + position.origin.y, x + position.origin.x);
        
-       if (GColorEq(temp_pixel, outline->orig_color)) {
+       if (gcolor_equal(temp_pixel, outline->orig_color)) {
           // TODO: there's probably a more efficient way to do this
           outlinex[0] = x + position.origin.x - outline->offset_x;
           outliney[0] = y + position.origin.y - outline->offset_y;
@@ -446,11 +446,11 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
             // TODO: centralize the constants
             if (outlinex[i] >= 0 && outlinex[i] <=144 && outliney[i] >= 0 && outliney[i] <= 168) {
               temp_pixel = (GColor)get_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i]);
-              if (!GColorEq(temp_pixel, outline->orig_color)) {
+              if (!gcolor_equal(temp_pixel, outline->orig_color)) {
                 #ifdef PBL_COLOR
                    set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], outline->offset_color.argb);  
                 #else
-                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], GColorEq(outline->offset_color, GColorWhite)? 1 : 0);
+                   set_pixel(bitmap_data, bytes_per_row, outliney[i], outlinex[i], gcolor_equal(outline->offset_color, GColorWhite)? 1 : 0);
                 #endif
               }
             }
