@@ -6,7 +6,7 @@ TextLayer *text_layer1, *text_layer2, *text_layer3, *text_layer4;
 PropertyAnimation *anim;
 
 EffectLayer* effect_layer;
-EffectMask mask;
+EffectOffset outline;
 
 GRect anim_finish[4] = {{{75,2}, {68,80}}, {{75,87}, {68,80}}, {{2,87}, {68,80}}, {{2,2},{68,80}}};
 int anim_count = -1;
@@ -61,40 +61,46 @@ void handle_init(void) {
   
   //creating colorful field (not doing this while testing MASK effect)
   #ifdef PBL_COLOR
-    create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorYellow, GColorRed);
-    create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorCyan, GColorBlue);
-    create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
-    create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorMintGreen, GColorDarkGreen);
+    create_color_layer(text_layer1, GRect(0,0,72,84), "11", GColorChromeYellow, GColorBlueMoon);
+    create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorChromeYellow, GColorBlueMoon);
+    create_color_layer(text_layer1, GRect(0,85,72,84), "33", GColorChromeYellow, GColorBlueMoon);
+    create_color_layer(text_layer1, GRect(73,85,72,84), "44", GColorChromeYellow, GColorBlueMoon);
   #else
-    create_color_layer(text_layer1, GRect(0,0,72,84), "11",  GColorBlack, GColorWhite);
+    create_color_layer(text_layer1, GRect(0,0,72,84), "11",  GColorWhite, GColorBlack);
     create_color_layer(text_layer1, GRect(73,0, 72,84), "22", GColorWhite, GColorBlack);
     create_color_layer(text_layer1, GRect(0,85,72,84), "44", GColorWhite, GColorBlack);
-    create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorBlack, GColorWhite);
+    create_color_layer(text_layer1, GRect(73,85,72,84), "66", GColorWhite, GColorBlack);
   #endif 
   
   //creating effect layer
-  effect_layer = effect_layer_create(GRect(2,2,68,80));
+  effect_layer = effect_layer_create(GRect(73,85,70,82));
   
-  mask.mask_color = GColorWhite;
-  mask.background_color = GColorBlack;
-  mask.bitmap_mask = gbitmap_create_with_resource(RESOURCE_ID_MASK_SHAPE);
-  mask.bitmap_background = gbitmap_create_with_resource(RESOURCE_ID_MASK_BG);
-    
-  effect_layer_add_effect(effect_layer, effect_rotate_90_degrees, (void *)true);
+  //creating outline param
+  #ifdef PBL_COLOR
+    outline.orig_color = GColorChromeYellow;
+    outline.offset_color = GColorRed;
+  #else
+    outline.orig_color = GColorWhite;
+    outline.offset_color = GColorBlack;
+  #endif
+  
+  outline.offset_x = 50;
+  outline.offset_y = 50;
+  
+  outline.option = 1;
+  
+  // adding shadow effect
+  effect_layer_add_effect(effect_layer, effect_shadow, &outline);
+  
   layer_add_child(window_get_root_layer(my_window), effect_layer_get_layer(effect_layer));
   
   //begin animation
-  next_anim();
+  //next_anim();
   
 }
 
 void handle_deinit(void) {
-  
-  //clearning MASK
-  gbitmap_destroy(mask.bitmap_mask);
-  gbitmap_destroy(mask.bitmap_background);
-
-  
+    
   text_layer_destroy(text_layer1);
   text_layer_destroy(text_layer1);
   text_layer_destroy(text_layer2);
